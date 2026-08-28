@@ -1,32 +1,84 @@
 # Vault — Crypto Portfolio Tracker
 
+DecodeLabs Full Stack Internship training project covering:
+
+- **Project 2: Backend API Development** — Express REST endpoints, request validation, JSON responses, RESTful naming, and HTTP status codes.
+- **Project 3: Database Integration** — SQLite persistence, schema constraints, CRUD operations, foreign keys, and parameterized SQL queries.
+
+## Run Locally
+
+Requirements: Node.js 22.5+ (Node.js 24 recommended) and npm. Node's built-in `node:sqlite` driver is used, so Visual Studio C++ tooling is not required.
+
+```powershell
+npm install
+npm start
+```
+
+Open `http://127.0.0.1:3000/crypto-tracker.html` in a browser. The server also exposes the API at `http://127.0.0.1:3000/api`.
+
+For development with automatic restarts:
+
+```powershell
+npm run dev
+```
+
+## REST API
+
+All request bodies must be JSON. Invalid or incomplete data returns `400 Bad Request` with a `details` array.
+
+| Method | Endpoint | Purpose | Success |
+| --- | --- | --- | --- |
+| GET | `/api/health` | Service health check | `200` |
+| GET | `/api/docs` | Endpoint overview | `200` |
+| GET | `/api/holdings` | List portfolio holdings | `200` |
+| POST | `/api/holdings` | Create a holding | `201` |
+| PUT | `/api/holdings/:ticker` | Replace a holding | `200` |
+| DELETE | `/api/holdings/:ticker` | Delete a holding | `204` |
+| GET | `/api/transactions` | List transactions | `200` |
+| POST | `/api/transactions` | Create a transaction | `201` |
+| DELETE | `/api/transactions/:id` | Delete a transaction | `204` |
+| GET | `/api/watchlist` | List watchlist coins | `200` |
+| POST | `/api/watchlist` | Add a watchlist coin | `201` |
+| DELETE | `/api/watchlist/:ticker` | Remove a watchlist coin | `204` |
+
+Example request:
+
+```powershell
+curl.exe -X POST http://127.0.0.1:3000/api/holdings `
+  -H "Content-Type: application/json" `
+  -d '{"ticker":"AVAX","name":"Avalanche","amount":12,"price":28.05,"changePercent":1.4}'
+```
+
+The API also returns `404` for missing resources, `409` for unique-key conflicts, and `500` for unexpected database errors.
+
+## Database Design
+
+The server creates `vault.db` on first run. It contains:
+
+- `holdings`: unique ticker, non-negative amount/price, and market change percentage.
+- `transactions`: buy/sell check constraint, positive amount, and a foreign key to `holdings.ticker`.
+- `watchlist`: unique ticker and non-negative price.
+
+All SQL writes use prepared statements. This prevents SQL injection and keeps user input separate from executable SQL. Schema constraints provide a second integrity layer instead of trusting client-side validation alone.
+
 ## Project Structure
 
 ```text
 crypto-tracker.html  # Static application entry point
-css/style.css        # All application styling and responsive rules
-js/
-	script.js          # Thin ES module bootstrap
-	state.js           # Shared app state and portfolio data
-	dom.js             # DOM query helpers
-	toast.js           # Shared toast feedback
-	modal-a11y.js      # Modal focus trapping and Escape handling
-	theme.js           # Theme switching
-	navigation.js      # View navigation and contextual search/filtering
-	coin-modal.js      # Holding details and sell interaction
-	watchlist.js       # Watchlist add/remove behavior
-	notifications.js   # Notification panel and detail modal
-	trades.js          # Trade modal and overview stat cards
-	profile.js         # Profile editing
-	settings.js        # Settings toggles and save behavior
-	shortcuts.js       # Avatar profile shortcut
-README.md            # Project documentation
+server.js            # Express API, validation, SQLite schema, seed data, and static hosting
+package.json         # Runtime scripts and dependencies
+vault.db             # Local SQLite database, generated and git-ignored
+css/style.css        # Application styling and responsive rules
+js/                   # Frontend modules and interactions
+README.md             # Project 2/3 documentation
 ```
 
-No framework, package install, or build step is required. Because the JavaScript uses native ES modules, serve the folder over HTTP:
+## HTTP Status Code Contract
 
-```powershell
-python -m http.server 4173
-```
-
-Then open `http://127.0.0.1:4173/crypto-tracker.html`.
+- `200 OK`: successful reads and updates
+- `201 Created`: new resource created
+- `204 No Content`: successful deletion
+- `400 Bad Request`: malformed or incomplete input
+- `404 Not Found`: resource or related holding does not exist
+- `409 Conflict`: duplicate unique resource
+- `500 Internal Server Error`: unexpected server/database failure
