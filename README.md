@@ -51,6 +51,10 @@ curl.exe -X POST http://127.0.0.1:3000/api/holdings `
 
 The API also returns `404` for missing resources, `409` for unique-key conflicts, and `500` for unexpected database errors.
 
+## Live Frontend Persistence
+
+The frontend reads holdings and watchlist records from the API on startup. Holding sell/delete, watchlist add, and watchlist remove actions wait for the database response before changing the screen. Failed requests show an error toast and leave the current UI state unchanged. Holdings created directly through the API are rendered after reload, so the browser view reflects the SQLite database rather than only the original demo HTML.
+
 ## Database Design
 
 The server creates `vault.db` on first run. It contains:
@@ -69,7 +73,9 @@ server.js            # Express API, validation, SQLite schema, seed data, and st
 package.json         # Runtime scripts and dependencies
 vault.db             # Local SQLite database, generated and git-ignored
 css/style.css        # Application styling and responsive rules
-js/                   # Frontend modules and interactions
+js/                   # Frontend modules, API client, live sync, and interactions
+  api.js              # Fetch wrapper and API error handling
+  data-sync.js        # Hydrates holdings/watchlist from SQLite on startup
 README.md             # Project 2/3 documentation
 ```
 

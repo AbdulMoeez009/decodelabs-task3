@@ -54,7 +54,10 @@ const seedHolding = db.prepare(`
 const seedTransaction = db.prepare(`
   INSERT INTO transactions (ticker, type, amount, price, traded_at)
   SELECT @ticker, @type, @amount, @price, @tradedAt
-  WHERE NOT EXISTS (SELECT 1 FROM transactions)
+  WHERE NOT EXISTS (
+    SELECT 1 FROM transactions
+    WHERE ticker = @ticker AND type = @type AND amount = @amount AND price = @price AND traded_at = @tradedAt
+  )
 `);
 [
   ['ETH', 'buy', 1.2, 3398.2, '2026-08-13 16:02:00'],
@@ -130,7 +133,9 @@ function validateWatchlist(body) {
 }
 
 function handleDatabaseError(res, error) {
-  if (error.code?.includes('SQLITE_CONSTRAINT')) return sendError(res, 409, 'Resource conflicts with an existing record');
+  if ([275, 787, 1555, 2067].includes(error.errcode) || error.code?.includes('CONSTRAINT')) {
+    return sendError(res, 409, error.errcode === 787 ? 'Holding has linked transactions' : 'Resource conflicts with an existing record');
+  }
   console.error(error);
   return sendError(res, 500, 'Database operation failed');
 }

@@ -1,12 +1,23 @@
 import { $, $$ } from './dom.js';
 import { watchIcons } from './state.js';
+import { api } from './api.js';
 
 export function initWatchlist({ showToast }) {
   const watchGrid = $('#watchGrid');
 
   function bindWatchRemove(card) {
-    card.querySelector('.watch-remove').addEventListener('click', () => {
+    card.dataset.watchBound = 'true';
+    card.querySelector('.watch-remove').addEventListener('click', async () => {
       const ticker = card.dataset.ticker;
+      const button = card.querySelector('.watch-remove');
+      button.disabled = true;
+      try {
+        await api.deleteWatchlist(ticker);
+      } catch (error) {
+        button.disabled = false;
+        showToast('Could not update the database');
+        return;
+      }
       card.style.transition = 'opacity .3s, transform .3s';
       card.style.opacity = '0';
       card.style.transform = 'scale(.9)';
@@ -19,13 +30,31 @@ export function initWatchlist({ showToast }) {
     });
   }
 
+  document.addEventListener('click', event => {
+    const button = event.target.closest('#watchGrid .watch-remove');
+    const card = button?.closest('.watch-card');
+    if (card && card.dataset.watchBound !== 'true') {
+      bindWatchRemove(card);
+      button.click();
+    }
+  });
+
   $$('.watch-card').forEach(bindWatchRemove);
-  $$('#browseList .add-watch-btn').forEach(button => button.addEventListener('click', () => {
+  $$('#browseList .add-watch-btn').forEach(button => button.addEventListener('click', async () => {
     const row = button.closest('.browse-row');
     const ticker = row.dataset.ticker;
     if (button.classList.contains('added')) return;
     const name = $('.coin-name', row).textContent;
     const tickerLine = $('.coin-ticker', row).textContent;
+    const price = Number(tickerLine.match(/\$([\d.]+)/)?.[1]);
+    button.disabled = true;
+    try {
+      await api.addWatchlist({ ticker, name, price });
+    } catch (error) {
+      button.disabled = false;
+      showToast(error.status === 409 ? `${name} is already on your watchlist` : 'Could not update the database');
+      return;
+    }
     const card = document.createElement('article');
     card.className = 'watch-card';
     card.dataset.ticker = ticker;

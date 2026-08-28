@@ -9,11 +9,13 @@ import { initTrades } from './trades.js';
 import { initProfile } from './profile.js';
 import { initSettings } from './settings.js';
 import { initShortcuts } from './shortcuts.js';
+import { initDataSync } from './data-sync.js';
 
 const modalA11y = createModalA11y();
 const { showToast } = createToast();
 
 initTheme();
+initDataSync({ showToast });
 initNavigation();
 const { openCoinModal } = initCoinModal({ showToast, modalA11y });
 initWatchlist({ showToast });
