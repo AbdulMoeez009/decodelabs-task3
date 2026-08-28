@@ -555,6 +555,8 @@ body{
 header.topbar{
   height:68px;
   padding:0 26px;
+  position:relative;
+  z-index:100;
   background:rgba(5,11,24,.88);
   border-bottom:1px solid var(--border-soft);
   backdrop-filter:blur(18px);
