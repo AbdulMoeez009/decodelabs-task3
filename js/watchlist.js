@@ -24,6 +24,7 @@ export function initWatchlist({ showToast }) {
       setTimeout(() => card.remove(), 300);
       const browseButton = $(`#browseList .browse-row[data-ticker="${ticker}"] .add-watch-btn`);
       if (browseButton) {
+        browseButton.disabled = false;
         browseButton.textContent = '+ Add';
         browseButton.classList.remove('added');
       }
