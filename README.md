@@ -6,7 +6,7 @@ DecodeLabs Full Stack Internship training project covering:
 - **Project 3: Database Integration** — SQLite persistence, schema constraints, CRUD operations, foreign keys, and parameterized SQL queries.
 - **Project 4: Frontend & Backend Integration** — `fetch()` with `async`/`await`, dynamic DOM updates, REST status handling, JSON serialization, CORS concepts, and defensive error handling.
 
-Production storage uses Supabase PostgreSQL. The legacy `server.js` SQLite implementation is retained for reference; the application starts `server-supabase.js`.
+Production storage uses Supabase PostgreSQL. Both Vercel's `server.js` entrypoint and local `npm start` use the Supabase-backed Express app.
 
 ## Run Locally
 
