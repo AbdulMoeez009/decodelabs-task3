@@ -34,6 +34,16 @@ npm run dev
 
 The API server uses the service-role key only on the server. Row Level Security is enabled on the tables, so direct browser access remains blocked unless explicit policies are later added.
 
+## Public Deployment with Netlify
+
+1. Open Netlify and choose **Add new project > Import an existing project**.
+2. Connect GitHub and select `AbdulMoeez009/decodelabs-task3`.
+3. Use the repository root as the base directory. Netlify reads `netlify.toml` automatically.
+4. In **Project configuration > Environment variables**, add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the production context.
+5. Deploy, then test `/api/health` and open the generated site URL.
+
+The Netlify Function in `netlify/functions/api.js` keeps the existing Express API contract while Netlify serves the static frontend.
+
 ## Public Deployment with Render
 
 The repository includes `render.yaml` for a Node web service deployment. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` when Render prompts for their secret values.
