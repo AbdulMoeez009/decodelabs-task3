@@ -6,11 +6,11 @@ DecodeLabs Full Stack Internship training project covering:
 - **Project 3: Database Integration** — SQLite persistence, schema constraints, CRUD operations, foreign keys, and parameterized SQL queries.
 - **Project 4: Frontend & Backend Integration** — `fetch()` with `async`/`await`, dynamic DOM updates, REST status handling, JSON serialization, CORS concepts, and defensive error handling.
 
-Production storage uses Supabase PostgreSQL. Both Vercel's `server.js` entrypoint and local `npm start` use the Supabase-backed Express app.
+The project uses a local SQLite database so it runs without cloud credentials or deployment configuration.
 
 ## Run Locally
 
-Requirements: Node.js 22.5+ (Node.js 24 recommended), npm, and a Supabase project.
+Requirements: Node.js 22.5+ (Node.js 24 recommended) and npm.
 
 ```powershell
 npm install
@@ -24,37 +24,6 @@ For development with automatic restarts:
 ```powershell
 npm run dev
 ```
-
-## Supabase Setup
-
-1. Create a Supabase project.
-2. Open **SQL Editor**, paste `supabase-schema.sql`, and run it.
-3. Copy the project URL and service-role key into `.env`, using `.env.example` as a template.
-4. Never expose the service-role key in frontend JavaScript or commit it to Git.
-
-The API server uses the service-role key only on the server. Row Level Security is enabled on the tables, so direct browser access remains blocked unless explicit policies are later added.
-
-## Public Deployment with Netlify
-
-1. Open Netlify and choose **Add new project > Import an existing project**.
-2. Connect GitHub and select `AbdulMoeez009/decodelabs-task3`.
-3. Use the repository root as the base directory. Netlify reads `netlify.toml` automatically.
-4. In **Project configuration > Environment variables**, add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the production context.
-5. Deploy, then test `/api/health` and open the generated site URL.
-
-The Netlify Function in `netlify/functions/api.js` keeps the existing Express API contract while Netlify serves the static frontend.
-
-## Public Deployment with Render
-
-The repository includes `render.yaml` for a Node web service deployment. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` when Render prompts for their secret values.
-
-1. Create a Render account and choose **New > Blueprint**.
-2. Connect the GitHub repository `AbdulMoeez009/decodelabs-task3`.
-3. Select the repository branch `main`; Render reads `render.yaml` automatically.
-4. Deploy, then open the generated `.onrender.com/crypto-tracker.html` URL.
-5. Confirm the generated `/api/health` endpoint returns `{ "status": "ok" }`.
-
-Supabase stores the data independently of the web server, so redeployments do not reset holdings, transactions, or watchlist records.
 
 ## REST API
 
@@ -85,8 +54,6 @@ curl.exe -X POST http://127.0.0.1:3000/api/holdings `
 
 The API also returns `404` for missing resources, `409` for unique-key conflicts, and `500` for unexpected database errors.
 
-## Live Frontend Persistence
-
 ## Project 4 Integration Checklist
 
 - Frontend requests `/api/holdings` and `/api/watchlist` on startup with `Promise.all`.
@@ -97,7 +64,7 @@ The API also returns `404` for missing resources, `409` for unique-key conflicts
 
 The frontend reads holdings and watchlist records from the API on startup. Holding sell/delete, watchlist add, and watchlist remove actions wait for the database response before changing the screen. Failed requests show an error toast and leave the current UI state unchanged. Holdings created directly through the API are rendered after reload, so the browser view reflects the SQLite database rather than only the original demo HTML.
 
-## Database Design
+## Live Frontend Persistence
 
 The server creates `vault.db` on first run. It contains:
 

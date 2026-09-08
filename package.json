@@ -2,14 +2,13 @@
   "name": "vault-crypto-tracker",
   "version": "1.0.0",
   "private": true,
-  "description": "DecodeLabs Full Stack Internship Project 4: frontend and Supabase backend integration.",
+  "description": "DecodeLabs Full Stack Internship Project 4: frontend and backend integration.",
   "type": "module",
   "scripts": {
-    "start": "node server-supabase.js",
-    "dev": "node --watch server-supabase.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "dependencies": {
-    "@vendia/serverless-express": "^4.12.6",
-    "express": "^4.21.2"
+    "express": "^5.1.0"
   }
 }
