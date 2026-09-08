@@ -86,4 +86,9 @@ app.delete('/api/watchlist/:ticker', async (req, res) => { try { const changes =
 
 app.use('/api', (_req, res) => sendError(res, 404, 'API route not found'));
 app.use((error, _req, res, next) => { if (error instanceof SyntaxError && error.status === 400 && error.type === 'entity.parse.failed') return sendError(res, 400, 'Request body must contain valid JSON'); return next(error); });
-app.listen(port, () => console.log(`Vault running at http://127.0.0.1:${port}/crypto-tracker.html (Supabase)`));
+
+export default app;
+
+if (!process.env.VERCEL) {
+  app.listen(port, () => console.log(`Vault running at http://127.0.0.1:${port}/crypto-tracker.html (Supabase)`));
+}
