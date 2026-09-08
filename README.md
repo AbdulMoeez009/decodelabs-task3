@@ -4,6 +4,7 @@ DecodeLabs Full Stack Internship training project covering:
 
 - **Project 2: Backend API Development** — Express REST endpoints, request validation, JSON responses, RESTful naming, and HTTP status codes.
 - **Project 3: Database Integration** — SQLite persistence, schema constraints, CRUD operations, foreign keys, and parameterized SQL queries.
+- **Project 4: Frontend & Backend Integration** — `fetch()` with `async`/`await`, dynamic DOM updates, REST status handling, JSON serialization, CORS concepts, and defensive error handling.
 
 ## Run Locally
 
@@ -52,6 +53,14 @@ curl.exe -X POST http://127.0.0.1:3000/api/holdings `
 The API also returns `404` for missing resources, `409` for unique-key conflicts, and `500` for unexpected database errors.
 
 ## Live Frontend Persistence
+
+## Project 4 Integration Checklist
+
+- Frontend requests `/api/holdings` and `/api/watchlist` on startup with `Promise.all`.
+- Create, delete, and watchlist actions wait for the API response before updating the interface.
+- Non-2xx responses become user-visible error toasts through the shared fetch wrapper.
+- API-backed values are inserted with DOM APIs and `textContent` rather than interpolated into `innerHTML`.
+- The Project 4 training deck is available from the **Project 4** navigation item in `crypto-tracker.html`.
 
 The frontend reads holdings and watchlist records from the API on startup. Holding sell/delete, watchlist add, and watchlist remove actions wait for the database response before changing the screen. Failed requests show an error toast and leave the current UI state unchanged. Holdings created directly through the API are rendered after reload, so the browser view reflects the SQLite database rather than only the original demo HTML.
 

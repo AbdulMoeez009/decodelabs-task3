@@ -11,7 +11,30 @@ function holdingRow(holding) {
   row.dataset.coin = holding.ticker;
   row.dataset.name = `${holding.name} ${holding.ticker}`.toLowerCase();
   row.dataset.trend = positive ? 'up' : 'down';
-  row.innerHTML = `<div class="coin-info"><span class="coin-icon">${icons[holding.ticker] || '●'}</span><div><div class="coin-name">${holding.name}</div><div class="coin-ticker">${holding.ticker}</div></div></div><span class="amount col-hide-mobile">${holding.amount} ${holding.ticker}</span><span class="amount col-hide-mobile">${formatMoney(holding.price)}</span><span class="change ${positive ? 'up' : 'down'}">${positive ? '▲' : '▼'} ${Math.abs(holding.change_percent)}%</span>`;
+  const coinInfo = document.createElement('div');
+  coinInfo.className = 'coin-info';
+  const icon = document.createElement('span');
+  icon.className = 'coin-icon';
+  icon.textContent = icons[holding.ticker] || '●';
+  const details = document.createElement('div');
+  const name = document.createElement('div');
+  name.className = 'coin-name';
+  name.textContent = holding.name;
+  const ticker = document.createElement('div');
+  ticker.className = 'coin-ticker';
+  ticker.textContent = holding.ticker;
+  details.append(name, ticker);
+  coinInfo.append(icon, details);
+  const amount = document.createElement('span');
+  amount.className = 'amount col-hide-mobile';
+  amount.textContent = `${holding.amount} ${holding.ticker}`;
+  const price = document.createElement('span');
+  price.className = 'amount col-hide-mobile';
+  price.textContent = formatMoney(holding.price);
+  const change = document.createElement('span');
+  change.className = `change ${positive ? 'up' : 'down'}`;
+  change.textContent = `${positive ? '▲' : '▼'} ${Math.abs(holding.change_percent)}%`;
+  row.append(coinInfo, amount, price, change);
   return row;
 }
 
@@ -75,7 +98,25 @@ function syncWatchlistRows(watchlist) {
     card.className = 'watch-card';
     card.dataset.ticker = item.ticker;
     card.dataset.name = `${item.name} ${item.ticker}`.toLowerCase();
-    card.innerHTML = `<div class="coin-info"><span class="coin-icon">●</span><div><div class="coin-name">${item.name}</div><div class="coin-ticker">${item.ticker} · ${formatMoney(item.price)}</div></div></div><button class="watch-remove">Remove</button>`;
+    const coinInfo = document.createElement('div');
+    coinInfo.className = 'coin-info';
+    const icon = document.createElement('span');
+    icon.className = 'coin-icon';
+    icon.textContent = '●';
+    const details = document.createElement('div');
+    const name = document.createElement('div');
+    name.className = 'coin-name';
+    name.textContent = item.name;
+    const ticker = document.createElement('div');
+    ticker.className = 'coin-ticker';
+    ticker.textContent = `${item.ticker} · ${formatMoney(item.price)}`;
+    details.append(name, ticker);
+    coinInfo.append(icon, details);
+    const remove = document.createElement('button');
+    remove.className = 'watch-remove';
+    remove.type = 'button';
+    remove.textContent = 'Remove';
+    card.append(coinInfo, remove);
     grid.appendChild(card);
   });
 }

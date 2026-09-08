@@ -9,7 +9,8 @@ export const searchPlaceholders = {
   transactions: 'Search transactions…',
   watchlist: 'Search watchlist & coins…',
   profile: 'Search profile…',
-  settings: 'Search settings…'
+  settings: 'Search settings…',
+  training: 'Search the deck…'
 };
 
 export const coinData = {

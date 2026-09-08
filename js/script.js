@@ -10,6 +10,7 @@ import { initProfile } from './profile.js';
 import { initSettings } from './settings.js';
 import { initShortcuts } from './shortcuts.js';
 import { initDataSync } from './data-sync.js';
+import { initTraining } from './training.js';
 
 const modalA11y = createModalA11y();
 const { showToast } = createToast();
@@ -24,3 +25,4 @@ initTrades({ openCoinModal, modalA11y });
 initProfile({ showToast });
 initSettings({ showToast });
 initShortcuts();
+initTraining();

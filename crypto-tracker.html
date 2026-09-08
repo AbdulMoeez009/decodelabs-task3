@@ -84,6 +84,7 @@
     <a href="#" class="nav-link" data-view="watchlist"><span class="icon">👁️</span><span class="label">Watchlist</span></a>
     <a href="#" class="nav-link" data-view="profile"><span class="icon">👤</span><span class="label">Profile</span></a>
     <a href="#" class="nav-link" data-view="settings"><span class="icon">⚙️</span><span class="label">Settings</span></a>
+    <a href="#" class="nav-link" data-view="training"><span class="icon">🧠</span><span class="label">Project 4</span></a>
   </nav>
 
   <main>
@@ -371,6 +372,26 @@
         </div>
         <button type="submit" class="save-btn">Save changes</button>
       </form>
+    </section>
+  </div>
+
+  <!-- ================= PROJECT 4 TRAINING DECK ================= -->
+  <div id="view-training" class="view training-view">
+    <div class="training-head">
+      <div>
+        <p class="eyebrow">DecodeLabs · Full Stack Development</p>
+        <h2 class="view-title">Project 4 / Integration Lab</h2>
+      </div>
+      <span class="training-counter" id="trainingCounter">01 / 19</span>
+    </div>
+    <section class="training-stage" aria-live="polite">
+      <div class="training-progress"><span id="trainingProgress"></span></div>
+      <div id="trainingSlide" class="training-slide"></div>
+      <div class="training-controls">
+        <button class="training-btn" id="trainingPrev" type="button">← Previous</button>
+        <div class="training-dots" id="trainingDots" aria-label="Choose a slide"></div>
+        <button class="training-btn training-btn-primary" id="trainingNext" type="button">Next →</button>
+      </div>
     </section>
   </div>
 
