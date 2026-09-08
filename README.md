@@ -23,6 +23,18 @@ For development with automatic restarts:
 npm run dev
 ```
 
+## Public Deployment with Render
+
+The repository includes `render.yaml` for a Node web service deployment.
+
+1. Create a Render account and choose **New > Blueprint**.
+2. Connect the GitHub repository `AbdulMoeez009/decodelabs-task3`.
+3. Select the repository branch `main`; Render reads `render.yaml` automatically.
+4. Deploy, then open the generated `.onrender.com/crypto-tracker.html` URL.
+5. Confirm the generated `/api/health` endpoint returns `{ "status": "ok" }`.
+
+The default SQLite database uses the server filesystem. On free or ephemeral hosting, a restart or redeploy can reset `vault.db`. For permanent production data, attach a persistent disk or move the database to a managed PostgreSQL/SQLite-compatible service.
+
 ## REST API
 
 All request bodies must be JSON. Invalid or incomplete data returns `400 Bad Request` with a `details` array.
