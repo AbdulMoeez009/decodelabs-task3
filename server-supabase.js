@@ -37,6 +37,7 @@ function validateWatchlist(body) {
   return [requireText(body.ticker, 'ticker'), requireText(body.name, 'name'), requireNumber(body.price, 'price')].filter(Boolean);
 }
 function handleDatabaseError(res, error) {
+  if (error.code === 'SUPABASE_CONFIG_MISSING') return sendError(res, 503, 'Supabase is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel settings.');
   if (error.code === '23505' || error.status === 409) return sendError(res, 409, 'Resource conflicts with an existing record');
   if (error.code === '23503') return sendError(res, 409, 'Holding has linked transactions');
   console.error(error);

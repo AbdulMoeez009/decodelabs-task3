@@ -1,11 +1,17 @@
 const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, '');
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !serviceRoleKey) {
-  throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required when using Supabase storage');
+function assertConfigured() {
+  if (!supabaseUrl || !serviceRoleKey) {
+    const error = new Error('Supabase environment variables are missing');
+    error.code = 'SUPABASE_CONFIG_MISSING';
+    error.status = 503;
+    throw error;
+  }
 }
 
 async function request(table, options = {}) {
+  assertConfigured();
   const { headers = {}, ...fetchOptions } = options;
   const response = await fetch(`${supabaseUrl}/rest/v1/${table}`, {
     headers: {
