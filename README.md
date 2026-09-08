@@ -6,9 +6,11 @@ DecodeLabs Full Stack Internship training project covering:
 - **Project 3: Database Integration** — SQLite persistence, schema constraints, CRUD operations, foreign keys, and parameterized SQL queries.
 - **Project 4: Frontend & Backend Integration** — `fetch()` with `async`/`await`, dynamic DOM updates, REST status handling, JSON serialization, CORS concepts, and defensive error handling.
 
+Production storage uses Supabase PostgreSQL. The legacy `server.js` SQLite implementation is retained for reference; the application starts `server-supabase.js`.
+
 ## Run Locally
 
-Requirements: Node.js 22.5+ (Node.js 24 recommended) and npm. Node's built-in `node:sqlite` driver is used, so Visual Studio C++ tooling is not required.
+Requirements: Node.js 22.5+ (Node.js 24 recommended), npm, and a Supabase project.
 
 ```powershell
 npm install
@@ -23,9 +25,18 @@ For development with automatic restarts:
 npm run dev
 ```
 
+## Supabase Setup
+
+1. Create a Supabase project.
+2. Open **SQL Editor**, paste `supabase-schema.sql`, and run it.
+3. Copy the project URL and service-role key into `.env`, using `.env.example` as a template.
+4. Never expose the service-role key in frontend JavaScript or commit it to Git.
+
+The API server uses the service-role key only on the server. Row Level Security is enabled on the tables, so direct browser access remains blocked unless explicit policies are later added.
+
 ## Public Deployment with Render
 
-The repository includes `render.yaml` for a Node web service deployment.
+The repository includes `render.yaml` for a Node web service deployment. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` when Render prompts for their secret values.
 
 1. Create a Render account and choose **New > Blueprint**.
 2. Connect the GitHub repository `AbdulMoeez009/decodelabs-task3`.
@@ -33,7 +44,7 @@ The repository includes `render.yaml` for a Node web service deployment.
 4. Deploy, then open the generated `.onrender.com/crypto-tracker.html` URL.
 5. Confirm the generated `/api/health` endpoint returns `{ "status": "ok" }`.
 
-The default SQLite database uses the server filesystem. On free or ephemeral hosting, a restart or redeploy can reset `vault.db`. For permanent production data, attach a persistent disk or move the database to a managed PostgreSQL/SQLite-compatible service.
+Supabase stores the data independently of the web server, so redeployments do not reset holdings, transactions, or watchlist records.
 
 ## REST API
 
