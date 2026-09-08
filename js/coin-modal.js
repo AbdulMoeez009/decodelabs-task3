@@ -65,7 +65,7 @@ export function initCoinModal({ showToast, modalA11y }) {
       closeCoinModal();
       setTimeout(() => showToast(`${name} (${ticker}) sold and removed from holdings`), 320);
     } catch (error) {
-      showToast(error.status === 409 ? 'Cannot delete holding with linked transactions' : 'Could not update the database');
+      showToast(error.status === 404 ? 'Holding was already removed' : 'Could not remove this holding');
     } finally {
       button.disabled = false;
     }

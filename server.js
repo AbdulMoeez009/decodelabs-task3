@@ -71,7 +71,23 @@ app.get('/api/docs', (_req, res) => res.json({ name: 'Vault API', database: 'SQL
 app.get('/api/holdings', (_req, res) => res.json(db.prepare('SELECT * FROM holdings ORDER BY name').all()));
 app.post('/api/holdings', (req, res) => { const errors = validateHolding(req.body); if (errors.length) return sendError(res, 400, 'Validation failed', errors); try { const result = db.prepare('INSERT INTO holdings (ticker, name, amount, price, change_percent) VALUES (?, ?, ?, ?, ?)').run(req.body.ticker.trim().toUpperCase(), req.body.name.trim(), req.body.amount, req.body.price, req.body.changePercent ?? 0); return res.status(201).json(db.prepare('SELECT * FROM holdings WHERE id = ?').get(result.lastInsertRowid)); } catch (error) { return handleDatabaseError(res, error); } });
 app.put('/api/holdings/:ticker', (req, res) => { const errors = validateHolding(req.body); if (errors.length) return sendError(res, 400, 'Validation failed', errors); const result = db.prepare('UPDATE holdings SET ticker=?, name=?, amount=?, price=?, change_percent=? WHERE ticker=?').run(req.body.ticker.trim().toUpperCase(), req.body.name.trim(), req.body.amount, req.body.price, req.body.changePercent ?? 0, req.params.ticker.toUpperCase()); if (!result.changes) return sendError(res, 404, 'Holding not found'); return res.json(db.prepare('SELECT * FROM holdings WHERE ticker = ?').get(req.body.ticker.trim().toUpperCase())); });
-app.delete('/api/holdings/:ticker', (req, res) => { try { const result = db.prepare('DELETE FROM holdings WHERE ticker = ?').run(req.params.ticker.toUpperCase()); if (!result.changes) return sendError(res, 404, 'Holding not found'); return res.status(204).send(); } catch (error) { return handleDatabaseError(res, error); } });
+app.delete('/api/holdings/:ticker', (req, res) => {
+  const ticker = req.params.ticker.toUpperCase();
+  try {
+    db.exec('BEGIN');
+    db.prepare('DELETE FROM transactions WHERE ticker = ?').run(ticker);
+    const result = db.prepare('DELETE FROM holdings WHERE ticker = ?').run(ticker);
+    if (!result.changes) {
+      db.exec('ROLLBACK');
+      return sendError(res, 404, 'Holding not found');
+    }
+    db.exec('COMMIT');
+    return res.status(204).send();
+  } catch (error) {
+    try { db.exec('ROLLBACK'); } catch {}
+    return handleDatabaseError(res, error);
+  }
+});
 
 app.get('/api/transactions', (_req, res) => res.json(db.prepare('SELECT * FROM transactions ORDER BY traded_at DESC').all()));
 app.post('/api/transactions', (req, res) => { const errors = validateTransaction(req.body); if (errors.length) return sendError(res, 400, 'Validation failed', errors); const ticker = req.body.ticker.trim().toUpperCase(); if (!db.prepare('SELECT 1 FROM holdings WHERE ticker = ?').get(ticker)) return sendError(res, 404, 'Holding ticker not found'); try { const result = db.prepare('INSERT INTO transactions (ticker, type, amount, price, traded_at) VALUES (?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))').run(ticker, req.body.type, req.body.amount, req.body.price, req.body.tradedAt || null); return res.status(201).json(db.prepare('SELECT * FROM transactions WHERE id = ?').get(result.lastInsertRowid)); } catch (error) { return handleDatabaseError(res, error); } });
