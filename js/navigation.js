@@ -43,6 +43,7 @@ export function initNavigation() {
 
   navLinks.forEach(link => link.addEventListener('click', event => {
     event.preventDefault();
+    $$('.modal-overlay.open').forEach(modal => modal.dispatchEvent(new Event('a11y-escape')));
     navLinks.forEach(item => item.classList.remove('active'));
     link.classList.add('active');
     const target = link.dataset.view;

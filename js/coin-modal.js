@@ -46,6 +46,7 @@ export function initCoinModal({ showToast, modalA11y }) {
 
   $('#modalClose').addEventListener('click', closeCoinModal);
   $('#modalCancel').addEventListener('click', closeCoinModal);
+  modal.addEventListener('a11y-escape', closeCoinModal);
   modal.addEventListener('click', event => { if (event.target === modal) closeCoinModal(); });
 
   $('#modalSell').addEventListener('click', async () => {
