@@ -1,4 +1,4 @@
-import serverless from 'serverless-http';
+import serverlessExpress from '@vendia/serverless-express';
 import app from '../../server-supabase.js';
 
-export const handler = serverless(app);
+export const handler = serverlessExpress({ app });
