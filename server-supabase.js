@@ -9,6 +9,7 @@ const port = Number(process.env.PORT) || 3000;
 
 app.use(express.json({ limit: '100kb' }));
 app.use(express.static(__dirname));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'crypto-tracker.html')));
 
 function sendError(res, status, message, details) {
   res.status(status).json({ error: message, ...(details ? { details } : {}) });
